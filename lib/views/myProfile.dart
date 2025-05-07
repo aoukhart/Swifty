@@ -1,17 +1,13 @@
 
 import 'dart:io';
 
-import 'package:any_image_view/any_image_view.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cached_network_svg_image/cached_network_svg_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_img/flutter_img.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:swifty_companion/app.service.dart';
 import 'package:jovial_svg/jovial_svg.dart';
 import '../models/user.dart';
-import 'package:flutter_svg_provider/flutter_svg_provider.dart';
+import '../packages/modified/spider_chart.dart';
 
 class ProfilePage extends StatefulWidget {
   final Api42Service api;
@@ -60,7 +56,7 @@ Widget ProfileWidget(BuildContext context,User user){
           SizedBox(height: 20,),
           ProjectSlider(context, user),
           SizedBox(height: 25,),
-          AchievementsSlider(context, user),
+          ProfileSkills(context, user),
           SizedBox(height: 15,),
         ],
       ),
@@ -306,37 +302,6 @@ Widget AchievementsSlider(BuildContext context, User user){
 
                               return Icon(Icons.error_outline);
                              },)
-                          // svgHasStyleTag(user.achievement[index].image) 
-                          // == false ?
-
-                          // :
-                          // ScalableImageWidget.fromSISource(
-                              
-                          //   cache: ScalableImageCache(
-                          //     size: 100
-                          //   ),
-                          //   si: ScalableImageSource.fromSvgHttpUrl(
-                          //     Uri.parse(user.achievement[index].image),
-
-                          //   ),
-                          // ),
-                          // SvgPicture.network(
-                          // errorBuilder: 
-                          // (context, error, stackTrace)      
-                          //
-                          //   {
-                          //     print("EGHOOOGH");     
-                          //     return  ScalableImageWidget.fromSISource(
-                          //     si: ScalableImageSource.fromSvgHttpUrl(
-                          //       Uri.parse(user.achievement[index].image)
-                          //     ),
-                          //   );
-                          //   }    ,            
-                          // // },
-                          // user.achievement[index].image,
-                          // fit: BoxFit.fitHeight,
-                          // ),
-
                         )
                       ],
                     ),
@@ -346,6 +311,54 @@ Widget AchievementsSlider(BuildContext context, User user){
         ),
       ],
     ));
+}
+
+Widget ProfileSkills(BuildContext context, User user){
+  return Container(      
+    padding: EdgeInsets.symmetric(horizontal: 0),
+    height: MediaQuery.sizeOf(context).height*0.55,
+    width: MediaQuery.sizeOf(context).width*0.9,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(25),
+      color: Colors.grey
+    ),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 12, bottom: 9),
+          child: Text("Skills", style: TextStyle(color: Colors.white, fontSize: 22,fontWeight: FontWeight.w700),),
+        ),
+        SizedBox(height: 30,),
+        Padding(
+          padding: const EdgeInsets.all(0),
+          child: Container(
+            height: MediaQuery.sizeOf(context).height*0.32,
+            child: SpiderChart(data: [6.2, 0, 3.74, 0, 10.99, 0, 0, 3.18, 6.96,4.87,  7.24, 5.67, 0, 0 ,7.76, 0,0,0,0, 4.34],
+              maxValue: 20,
+
+              labels: ["Web", "Adaptation\n& creativity\n\n", "Algo & AI", "Functional\nprogramming", "\nCompany\n  Exp.", "\n\nDb & Data", "\n\nBasics", "\n\nGraphics", "\nGroup &\ninterpersonal", "\n\nImperative\nprogramming", "\n\nNetwork\n& system\nadministration", "\n\nObject oriented\nprogramming", "\n\nOrganization", "\nParallel\ncomputing", "Rigor", "Ruby", "Security", "Shell", "Technology\nintegration", "Unix"],
+              size: Size(MediaQuery.sizeOf(context).width*0.1, MediaQuery.sizeOf(context).height*0.1),
+              // colorSwatch: MaterialColor(primary, swatch),
+            )
+
+              // ticks: [5,10,15,20].toList(),
+              // features: ["Web", "Adaptation & creativity", "Algo & AI", "Basics", "Company Exp", "Db & Data", "Functional programming", "Graphics","Group & interpersonal", "Imperative programming", "Network & system administration", "Objectoriented programming", "Organization", "Parallel computing", "Rigor", "Ruby", "Security", "Shell", "Technology integration", "Unix"].toList(),
+              // data: [[6.2, 0, 3.74, 0, 10.99, 0,0 ,3.18, 6.96,4.87,  7.24, 5.67, 0, 0 ,7.76, 0,0,0,0, 4.34].toList()], 
+              // axisColor: Colors.black12,
+              // graphColors: [const Color.fromARGB(255, 0, 109, 4)],
+              // sides: 20,
+              // outlineColor: const Color.fromARGB(255, 188, 188, 188),
+              // featuresTextStyle: TextStyle(fontSize: 8, overflow: TextOverflow.fade),
+          
+              
+              ),
+        ),
+          SizedBox(
+            height: 0,
+          )
+      ]));
 }
 
 Future<Widget?> svgHasStyleTag(String path) async {
