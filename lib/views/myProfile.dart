@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:swifty_companion/app.service.dart';
 import 'package:jovial_svg/jovial_svg.dart';
+import 'package:swifty_companion/models/achievement.dart';
 import '../models/user.dart';
 import '../packages/modified/spider_chart.dart';
 
@@ -56,13 +57,14 @@ Widget ProfileWidget(BuildContext context,User user){
           SizedBox(height: 20,),
           ProjectSlider(context, user),
           SizedBox(height: 25,),
-          ProfileSkills(context, user),
+          SkillsAchievementsCarousel(context, user),
           SizedBox(height: 15,),
         ],
       ),
     
   );
 }
+
 
 Widget ProfileHeader(BuildContext context, User user){
   return Container(
@@ -234,10 +236,75 @@ Widget ProjectSlider(BuildContext context, User user){
     ));
 }
 
+Widget SkillsAchievementsCarousel(BuildContext context, User user){
+  int index = 0;
+  final pages = [AchievementsSlider(context, user), ProfileSkills(context, user)]; 
+return Container(      
+    padding: EdgeInsets.symmetric(horizontal: 0),
+    height: MediaQuery.sizeOf(context).height*0.55,
+    width: MediaQuery.sizeOf(context).width*0.9,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(25),
+    ),
+    child: 
+    // Stack(
+      // children: [
+
+        Scrollable(
+          
+          axisDirection: AxisDirection.down,
+          viewportBuilder: 
+
+          (context, position) {
+            return ListView.separated(
+
+            separatorBuilder: (context, index) => SizedBox(width: MediaQuery.sizeOf(context).width*0.05,),
+            scrollDirection: Axis.horizontal,
+            itemBuilder: 
+              (context, ind)
+              {
+                index = ind;
+                return Stack(
+                  children: [
+                    pages[ind],
+                    Positioned(
+                    top: 15, left: 15,
+                      child: IconButton(icon: Icon(Icons.arrow_back_ios_new),
+                        color: const Color.fromARGB(255, 96, 96, 96),
+                        onPressed: (){
+                          if (ind > 0){
+                            ind--;
+                            index--;
+                            print(ind);
+                          }
+                          // ind > 0 ? index-- : ind;
+                        },
+                      )
+                    )
+
+                  ],
+                );
+              },
+            itemCount: 2);}
+      // ],
+    ),
+    // CarouselView(
+
+    //   itemExtent: MediaQuery.sizeOf(context).width*0.9,
+    //   shrinkExtent: MediaQuery.sizeOf(context).width*0.5,
+    //     scrollDirection: Axis.horizontal,
+          
+    //      children: [
+    //     AchievementsSlider(context, user),  
+    //     ProfileSkills(context, user)
+    //   ]),
+    );
+}
+
 Widget AchievementsSlider(BuildContext context, User user){
   return Container(      
     padding: EdgeInsets.symmetric(horizontal: 0),
-    height: MediaQuery.sizeOf(context).height*0.35,
+    height: MediaQuery.sizeOf(context).height*0.5,
     width: MediaQuery.sizeOf(context).width*0.9,
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(25),
@@ -249,12 +316,14 @@ Widget AchievementsSlider(BuildContext context, User user){
       children: [
         Padding(
           padding: const EdgeInsets.only(top: 12, bottom: 9),
-          child: Text("Achievements", style: TextStyle(color: Colors.white, fontSize: 22,fontWeight: FontWeight.w700),),
+          child: Text("Achievements", style: TextStyle(
+            color: Colors.white, fontSize: 22,fontWeight: FontWeight.w700),),
         ),
         Container(
-          height: MediaQuery.sizeOf(context).height*0.25,
+          height: MediaQuery.sizeOf(context).height*0.41,
           width: MediaQuery.sizeOf(context).width*0.8,
           child: Scrollable(
+
               viewportBuilder: (context, position) => 
               ListView.separated(
                 separatorBuilder: (context, index) => SizedBox(height: 14,),
@@ -316,7 +385,7 @@ Widget AchievementsSlider(BuildContext context, User user){
 Widget ProfileSkills(BuildContext context, User user){
   return Container(      
     padding: EdgeInsets.symmetric(horizontal: 0),
-    height: MediaQuery.sizeOf(context).height*0.55,
+    height: MediaQuery.sizeOf(context).height*0.5,
     width: MediaQuery.sizeOf(context).width*0.9,
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(25),
@@ -338,8 +407,8 @@ Widget ProfileSkills(BuildContext context, User user){
             child: SpiderChart(data: [6.2, 0, 3.74, 0, 10.99, 0, 0, 3.18, 6.96,4.87,  7.24, 5.67, 0, 0 ,7.76, 0,0,0,0, 4.34],
               maxValue: 20,
 
-              labels: ["Web", "Adaptation\n& creativity\n\n", "Algo & AI", "Functional\nprogramming", "\nCompany\n  Exp.", "\n\nDb & Data", "\n\nBasics", "\n\nGraphics", "\nGroup &\ninterpersonal", "\n\nImperative\nprogramming", "\n\nNetwork\n& system\nadministration", "\n\nObject oriented\nprogramming", "\n\nOrganization", "\nParallel\ncomputing", "Rigor", "Ruby", "Security", "Shell", "Technology\nintegration", "Unix"],
-              size: Size(MediaQuery.sizeOf(context).width*0.1, MediaQuery.sizeOf(context).height*0.1),
+              labels: ["Web", "Adaptation\n& creativity\n", "Algo & AI", "Functional\nprogramming", "\nCompany\n  Exp.", "\n\nDb & Data", "\n\nBasics", "\n\nGraphics", "\nGroup &\ninterpersonal", "\n\nImperative\nprogramming", "Network\n& system\nadministration", "\n\nObject oriented\nprogramming", "\n\nOrganization", "\nParallel\ncomputing", "Rigor", "Ruby", "Security", "Shell", "Technology\nintegration", "Unix"],
+              // size: Size(MediaQuery.sizeOf(context).width*0.1, MediaQuery.sizeOf(context).height*0.1),
               // colorSwatch: MaterialColor(primary, swatch),
             )
 
