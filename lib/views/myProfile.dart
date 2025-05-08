@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:swifty_companion/app.service.dart';
 import 'package:jovial_svg/jovial_svg.dart';
 import 'package:swifty_companion/models/achievement.dart';
+import 'package:swifty_companion/models/skills.dart';
 import '../models/user.dart';
 import '../packages/modified/spider_chart.dart';
 
@@ -57,7 +58,7 @@ Widget ProfileWidget(BuildContext context,User user){
           SizedBox(height: 20,),
           ProjectSlider(context, user),
           SizedBox(height: 25,),
-          SkillsAchievementsCarousel(context, user),
+          SkillsAchievementsCarousel( context , user),
           SizedBox(height: 15,),
         ],
       ),
@@ -236,8 +237,120 @@ Widget ProjectSlider(BuildContext context, User user){
     ));
 }
 
+class SkillsAndAchievements extends StatefulWidget {
+  const SkillsAndAchievements({super.key, required this.user, required this.context});
+  final User user;
+  final BuildContext context;
+  @override
+  State<SkillsAndAchievements> createState() => _SkillsAndAchievementsState();
+}
+
+class _SkillsAndAchievementsState extends State<SkillsAndAchievements> {
+  
+  
+  int index = 0;
+  ScrollController _scrollController = ScrollController();
+  late List<Widget> pages = [
+    AchievementsSlider(widget.context, widget.user),
+    ProfileSkills(widget.context, widget.user)
+  ]; 
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(      
+    padding: EdgeInsets.symmetric(horizontal: 0),
+    height: MediaQuery.sizeOf(context).height*0.55,
+    width: MediaQuery.sizeOf(context).width*0.9,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(25),
+    ),
+    child: 
+    // Stack(
+      // children: [
+
+        Scrollable(
+          
+          axisDirection: AxisDirection.down,
+          viewportBuilder: 
+
+          (context, position) {
+            return ListView.separated(
+            controller: _scrollController,
+            separatorBuilder: (context, index) => SizedBox(width: MediaQuery.sizeOf(context).width*0.05,),
+            scrollDirection: Axis.horizontal,
+            itemBuilder: 
+              (context, ind)
+              {
+                // setState(() {
+                  index = ind;
+                // });
+                return Stack(
+                  children: [
+                    pages[index],
+                    Positioned(
+                    top: 5, left: 15,
+                      child: IconButton(icon: Icon(Icons.arrow_back_ios_new),
+                        color: const Color.fromARGB(255, 96, 96, 96),
+                        onPressed: (){
+                          if (ind > 0){
+                            setState(() {
+                              index = ind;
+                              index--;
+                              _scrollController.animateTo(0,
+                              duration: Duration(milliseconds: 500),
+                              curve: Curves.easeIn);
+                            });
+                            print(index);
+                            print(ind);
+                          }
+                          // ind > 0 ? index-- : ind;
+                        },
+                      )
+                    ),Positioned(
+                    top: 5, right: 15,
+                      child: IconButton(icon: Icon(Icons.arrow_forward_ios),
+                        color: const Color.fromARGB(255, 96, 96, 96),
+                        onPressed: (){
+                          if (ind < 1){
+                            setState(() {
+                              index = ind;
+                              index++;
+                              _scrollController.animateTo(MediaQuery.sizeOf(context).width*0.95,
+                              duration: Duration(milliseconds: 500),
+                              curve: Curves.easeIn);
+                            });
+                            print(index);
+                            print(ind);
+                          }
+                          // ind > 0 ? index-- : ind;
+                        },
+                      ))
+                    
+
+                  ],
+                );
+              },
+            itemCount: 2);}
+      // ],
+    ),
+    // CarouselView(
+
+    //   itemExtent: MediaQuery.sizeOf(context).width*0.9,
+    //   shrinkExtent: MediaQuery.sizeOf(context).width*0.5,
+    //     scrollDirection: Axis.horizontal,
+          
+    //      children: [
+    //     AchievementsSlider(context, user),  
+    //     ProfileSkills(context, user)
+    //   ]),
+    );
+  }
+}
+
 Widget SkillsAchievementsCarousel(BuildContext context, User user){
   int index = 0;
+  ScrollController _scrollController = ScrollController();
+
   final pages = [AchievementsSlider(context, user), ProfileSkills(context, user)]; 
 return Container(      
     padding: EdgeInsets.symmetric(horizontal: 0),
@@ -257,30 +370,52 @@ return Container(
 
           (context, position) {
             return ListView.separated(
-
+            controller: _scrollController,
             separatorBuilder: (context, index) => SizedBox(width: MediaQuery.sizeOf(context).width*0.05,),
             scrollDirection: Axis.horizontal,
             itemBuilder: 
               (context, ind)
               {
-                index = ind;
+                // setState(() {
+                  index = ind;
+                // });
                 return Stack(
                   children: [
-                    pages[ind],
+                    pages[index],
                     Positioned(
-                    top: 15, left: 15,
+                    top: 5, left: 15,
                       child: IconButton(icon: Icon(Icons.arrow_back_ios_new),
                         color: const Color.fromARGB(255, 96, 96, 96),
                         onPressed: (){
                           if (ind > 0){
-                            ind--;
-                            index--;
+                              index = ind;
+                              index--;
+                              _scrollController.animateTo(0,
+                              duration: Duration(milliseconds: 500),
+                              curve: Curves.easeIn);
+                            print(index);
                             print(ind);
                           }
                           // ind > 0 ? index-- : ind;
                         },
                       )
-                    )
+                    ),Positioned(
+                    top: 5, right: 15,
+                      child: IconButton(icon: Icon(Icons.arrow_forward_ios),
+                        color: const Color.fromARGB(255, 96, 96, 96),
+                        onPressed: (){
+                          if (ind < 1){
+                              index = ind;
+                              index++;
+                              _scrollController.animateTo(MediaQuery.sizeOf(context).width*0.95,
+                              duration: Duration(milliseconds: 500),
+                              curve: Curves.easeIn);
+                            };
+                            print(index);
+                            print(ind);
+                          }))
+                          // ind > 0 ? index-- : ind;
+               
 
                   ],
                 );
@@ -383,6 +518,38 @@ Widget AchievementsSlider(BuildContext context, User user){
 }
 
 Widget ProfileSkills(BuildContext context, User user){
+  List skills = [
+// , , , , , "\n\nDb & Data", "\n\nBasics", "\n\nGraphics", "\nGroup &\ninterpersonal", "\n\nImperative\nprogramming", "Network\n& system\nadministration", "\n\nObject oriented\nprogramming", "\n\nOrganization", "\nParallel\ncomputing", "Rigor", "Ruby", "Security", "Shell", "Technology\nintegration", "Unix"],
+              user.skills.where((skill)=>skill.name == "Web").isEmpty ? 0 : user.skills.where((skill)=>skill.name == "Web").last ,
+              user.skills.where((skill)=>skill.name == "Adaptation & creativity").isEmpty ? 0 : user.skills.where((skill)=>skill.name == "Adaptation & creativity").last ,
+              user.skills.where((skill)=>skill.name == "Algorithms & AI").isEmpty ? 0 : user.skills.where((skill)=>skill.name == "Algorithms & AI").last,
+              user.skills.where((skill)=>skill.name == "Functional programming").isEmpty ? 0 : user.skills.where((skill)=>skill.name == "Functional programming").last,
+              user.skills.where((skill)=>skill.name == "Company experience").isEmpty ? 0 : user.skills.where((skill)=>skill.name == "Company experience").last,
+              user.skills.where((skill)=>skill.name == "Db & Data").isEmpty ? 0 : user.skills.where((skill)=>skill.name == "Db & Data").last,
+              user.skills.where((skill)=>skill.name == "Basics").isEmpty ? 0 : user.skills.where((skill)=>skill.name == "Basics").last,
+              user.skills.where((skill)=>skill.name == "Graphics").isEmpty ? 0 : user.skills.where((skill)=>skill.name == "Graphics").last,
+              user.skills.where((skill)=>skill.name == "Group & interpersonal").isEmpty ? 0 : user.skills.where((skill)=>skill.name == "Group & interpersonal").last,
+              user.skills.where((skill)=>skill.name == "Imperative programming").isEmpty ? 0 : user.skills.where((skill)=>skill.name == "Imperative programming").last,
+              user.skills.where((skill)=>skill.name == "Network & system administration").isEmpty ? 0 : user.skills.where((skill)=>skill.name == "Network & system administration").last,
+              user.skills.where((skill)=>skill.name == "Object-oriented programming").isEmpty ? 0 : user.skills.where((skill)=>skill.name == "Object-oriented programming").last,
+              user.skills.where((skill)=>skill.name == "Organization").isEmpty ? 0 : user.skills.where((skill)=>skill.name == "Organization").last,
+              user.skills.where((skill)=>skill.name == "Parallel computing").isEmpty ? 0 : user.skills.where((skill)=>skill.name == "Parallel computing").last,
+              user.skills.where((skill)=>skill.name == "Rigor").isEmpty ? 0 : user.skills.where((skill)=>skill.name == "Rigor").last,
+              user.skills.where((skill)=>skill.name == "Ruby").isEmpty ? 0 : user.skills.where((skill)=>skill.name == "Ruby").last,
+              user.skills.where((skill)=>skill.name == "Security").isEmpty ? 0 : user.skills.where((skill)=>skill.name == "Security").last,
+              user.skills.where((skill)=>skill.name == "Shell").isEmpty ? 0 : user.skills.where((skill)=>skill.name == "Shell").last,
+              user.skills.where((skill)=>skill.name == "Shell").isEmpty ? 0 : user.skills.where((skill)=>skill.name == "Technology integration").last,
+              user.skills.where((skill)=>skill.name == "Unix").isEmpty ? 0 : user.skills.where((skill)=>skill.name == "Unix").last,
+
+    
+    ];
+    skills.forEach((element) {
+      if(element != 0){
+      print("${element.name} ${element.level}");
+      }else 
+      print (element);
+
+    });
   return Container(      
     padding: EdgeInsets.symmetric(horizontal: 0),
     height: MediaQuery.sizeOf(context).height*0.5,
@@ -401,15 +568,22 @@ Widget ProfileSkills(BuildContext context, User user){
         ),
         SizedBox(height: 30,),
         Padding(
-          padding: const EdgeInsets.all(0),
+          padding: const EdgeInsets.only(right: 1),
           child: Container(
             height: MediaQuery.sizeOf(context).height*0.32,
-            child: SpiderChart(data: [6.2, 0, 3.74, 0, 10.99, 0, 0, 3.18, 6.96,4.87,  7.24, 5.67, 0, 0 ,7.76, 0,0,0,0, 4.34],
-              maxValue: 20,
+            child: SpiderChart(data:skills.map((e){
+              if (e != 0){
+                return e.level as double;
+              }
+              return 0.0;
+            },).toList(),
+            decimalPrecision: 1,
 
-              labels: ["Web", "Adaptation\n& creativity\n", "Algo & AI", "Functional\nprogramming", "\nCompany\n  Exp.", "\n\nDb & Data", "\n\nBasics", "\n\nGraphics", "\nGroup &\ninterpersonal", "\n\nImperative\nprogramming", "Network\n& system\nadministration", "\n\nObject oriented\nprogramming", "\n\nOrganization", "\nParallel\ncomputing", "Rigor", "Ruby", "Security", "Shell", "Technology\nintegration", "Unix"],
-              // size: Size(MediaQuery.sizeOf(context).width*0.1, MediaQuery.sizeOf(context).height*0.1),
-              // colorSwatch: MaterialColor(primary, swatch),
+            maxValue: 20,
+            labels: ["Web", "Adaptation\n& creativity\n", "Algo & AI",
+             "Functional\nprogramming", "\nCompany\n  Exp.", "\n\nDb & Data",
+             "\n\nBasics", "\n\nGraphics", "\nGroup &\ninterpersonal", "\n\nImperative\nprogramming", "Network\n& system\nadministration", "\n\nObject oriented\nprogramming", "\n\nOrganization",
+              "\nParallel\ncomputing", "Rigor", "Ruby", "Security", "Shell", "Technology\nintegration", "Unix"],
             )
 
               // ticks: [5,10,15,20].toList(),

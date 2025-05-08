@@ -1,6 +1,7 @@
 
 import 'package:swifty_companion/models/achievement.dart';
 import 'package:swifty_companion/models/project.dart';
+import 'package:swifty_companion/models/skills.dart';
 
 class User{
   int     id;
@@ -13,8 +14,9 @@ class User{
   int     corrPts;
   int     wallet;
   double level;
-  List<Project> projects;
+  List<Project>     projects;
   List<Achievement> achievement;
+  List<Skill>       skills;
 
   User({
     required this.id,
@@ -28,12 +30,16 @@ class User{
     required this.wallet,
     required this.level,
     required this.projects,
-    required this.achievement
+    required this.achievement,
+    required this.skills
   });
 
   factory User.fromJson(Map<String, dynamic> json){
     List<dynamic> projectsJson = json['projects_users'];
     List<dynamic> achievementsJson = json['achievements'];
+    List<dynamic> cursus_users = json['cursus_users'];
+    
+    List<Skill> skills = [];
     List<Project> projects = [];
     List<Achievement> achievements = [];
     // print(json);
@@ -50,6 +56,19 @@ class User{
         Achievement.fromJson(element)
       );
     },);
+
+    cursus_users.forEach((element) {
+        List skills_tmp = element['skills'];
+        skills_tmp.forEach((element1) {
+          skills.add(Skill.fromJson(element1));
+        },);
+    },);
+
+    skills.forEach((element) {
+      print("=> ${element.level}");
+      print("=> ${element.name}");
+    },);
+
     print(json['location']);
     return User(
       id: json['id'],
@@ -62,6 +81,7 @@ class User{
       projects: projects,
       level: json["cursus_users"][1]["level"],
       achievement: achievements,
+      skills: skills
     );
   }
 }
