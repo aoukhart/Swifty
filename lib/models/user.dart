@@ -57,19 +57,11 @@ class User{
       );
     },);
 
-    cursus_users.forEach((element) {
-        List skills_tmp = element['skills'];
-        skills_tmp.forEach((element1) {
-          skills.add(Skill.fromJson(element1));
-        },);
+    cursus_users[1]['skills'].forEach((element) {
+          skills.add(Skill.fromJson(element));
     },);
 
-    skills.forEach((element) {
-      print("=> ${element.level}");
-      print("=> ${element.name}");
-    },);
-
-    print(json['location']);
+    // print(json['location']);
     return User(
       id: json['id'],
       login: json['login'],

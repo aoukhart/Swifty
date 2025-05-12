@@ -83,11 +83,11 @@ class SpiderChartPainter extends CustomPainter {
   final Paint spokes = Paint()..color = const Color.fromARGB(255, 0, 0, 0);
 
   final Paint fill = Paint()
-    ..color = const Color.fromARGB(15, 0, 0, 0)
+    ..color = const Color.fromARGB(15, 0, 24, 159)
     ..style = PaintingStyle.fill;
 
   final Paint stroke = Paint()
-    ..color = const Color.fromARGB(255, 56, 197, 70)
+    ..color = const Color.fromARGB(255, 0, 255, 26)
     ..style = PaintingStyle.stroke;
 
   SpiderChartPainter(this.data, this.maxNumber, this.colors, this.labels,
@@ -132,7 +132,7 @@ class SpiderChartPainter extends CustomPainter {
 
     canvas.drawPath(
       path,
-      fill,
+      stroke,
     );
 
     canvas.drawPath(path, stroke);
@@ -150,7 +150,7 @@ class SpiderChartPainter extends CustomPainter {
     for (var i = 0; i < points.length; i++) {
       String s = data[i].toStringAsFixed(decimalPrecision);
       textPainter.text =
-          TextSpan(text: s, style: const TextStyle(color: Color.fromARGB(255, 255, 255, 255), fontSize: 6));
+          TextSpan(text: s, style: const TextStyle(color: Color.fromARGB(255, 255, 255, 255), fontSize: 6, fontWeight: FontWeight.w800));
       textPainter.layout();
       if (points[i].dx < center.dx) {
         textPainter.paint(

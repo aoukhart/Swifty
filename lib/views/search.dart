@@ -31,12 +31,40 @@ class _SearchPageState extends State<SearchPage> {
              
           ),
           TextButton(
-            onPressed: () {
-              print(_controller.text);
-                Navigator.push(context, MaterialPageRoute(builder: 
-                  (context) => SearchedProfile(
-                    api: widget.api,
-                    user: widget.api.getUserWithLogin(_controller.text))));
+            onPressed: ()async {
+              try {
+                Future<User> searchedUser = widget.api.getUserWithLogin(_controller.text);
+                User user = await searchedUser;
+                print(_controller.text);
+                print(user.name);
+                  Navigator.push(context, MaterialPageRoute(builder: 
+                    (context) {
+                    
+                    return SearchedProfile(
+                      api: widget.api,
+                      user: searchedUser
+                      );
+                    }
+                      ));
+              } on Exception catch (e) {
+                print("L EGHOOOOGH" + e.toString());
+                final snackBar = SnackBar(content: Container(
+                  height: MediaQuery.sizeOf(context).height*0.06,
+                  child: Center(child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text("User not found.", style: TextStyle(fontWeight: FontWeight.w700),),
+                      Text("Wrong login."),
+                    ],
+                  ))),
+                backgroundColor: Colors.red,
+                duration: Duration(seconds: 2),
+                behavior: SnackBarBehavior.floating,
+                padding: EdgeInsets.all(5),
+                
+              );
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              }
             },
             style: ButtonStyle(
               backgroundColor:WidgetStateColor.resolveWith((states) => Colors.grey)

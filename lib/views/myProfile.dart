@@ -34,8 +34,8 @@ class _ProfilePageState extends State<ProfilePage> {
         if (snapshot.hasData){
           return  ProfileWidget(context, snapshot.data!);
         }else if (snapshot.hasError){
-          print(">>>>"+snapshot.error.toString());
-          print(">>>> ${snapshot.hasData}");
+          // print(">>>>"+snapshot.error.toString());
+          // print(">>>> ${snapshot.hasData}");
           return Text("Something went wrong");
         }
         return Center(
@@ -91,21 +91,45 @@ Widget ProfileHeader(BuildContext context, User user){
             ),
             if (user.location != null)
               Positioned(
-                height: MediaQuery.sizeOf(context).height*0.18,
-                width: MediaQuery.sizeOf(context).width*0.5,
+
+                height: MediaQuery.sizeOf(context).height*0.03,
+                width: MediaQuery.sizeOf(context).width*0.21,
+                // left: MediaQuery.sizeOf(context).width*0,
+                top: MediaQuery.sizeOf(context).height*0.015,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.red,
-                    borderRadius: BorderRadius.circular(25)
+                    color: const Color.fromARGB(255, 22, 146, 0),
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(25),
+                      bottomRight: Radius.circular(25))
                   ),
-                  child: Text(user.location!, style: TextStyle(color: Colors.white),),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 5),
+                          child: Text(user.location!, style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700
+                            ),),
+                        ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: CircleAvatar(radius: 5,backgroundColor: const Color.fromARGB(255, 75, 218, 80),),
+                      ),
+
+                      ],
+                    ),
+                  
               ))
             
               
             ,
             Positioned(
               top: MediaQuery.sizeOf(context).height*0.06,
-              left: MediaQuery.sizeOf(context).width*0.07,
+              left: MediaQuery.sizeOf(context).width*0.05,
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.black,
@@ -196,11 +220,11 @@ Widget ProjectSlider(BuildContext context, User user){
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Padding(
-          padding: const EdgeInsets.only(top: 12, bottom: 9),
+          padding: const EdgeInsets.only(top: 12, bottom: 12),
           child: Text("Projects", style: TextStyle(color: Colors.white, fontSize: 22,fontWeight: FontWeight.w700),),
         ),
         Container(
-          height: MediaQuery.sizeOf(context).height*0.3,
+          height: MediaQuery.sizeOf(context).height*0.32,
           width: MediaQuery.sizeOf(context).width*0.8,
           child: Scrollable(
               viewportBuilder: (context, position) => 
@@ -219,8 +243,11 @@ Widget ProjectSlider(BuildContext context, User user){
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(user.projects[index].name,
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 16),),
+                        Container(
+                          width: MediaQuery.sizeOf(context).width*0.6,
+                          child: Text(user.projects[index].name,
+                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 16, overflow: TextOverflow.ellipsis), maxLines: 2,softWrap: true,),
+                        ),
                         Text(user.projects[index].mark.toString(),
                           style: TextStyle(color: 
                             user.projects[index].mark <= 0 ? 
@@ -300,8 +327,8 @@ class _SkillsAndAchievementsState extends State<SkillsAndAchievements> {
                               duration: Duration(milliseconds: 500),
                               curve: Curves.easeIn);
                             });
-                            print(index);
-                            print(ind);
+                            // print(index);
+                            // print(ind);
                           }
                           // ind > 0 ? index-- : ind;
                         },
@@ -393,10 +420,7 @@ return Container(
                               _scrollController.animateTo(0,
                               duration: Duration(milliseconds: 500),
                               curve: Curves.easeIn);
-                            print(index);
-                            print(ind);
                           }
-                          // ind > 0 ? index-- : ind;
                         },
                       )
                     ),Positioned(
@@ -411,28 +435,12 @@ return Container(
                               duration: Duration(milliseconds: 500),
                               curve: Curves.easeIn);
                             };
-                            print(index);
-                            print(ind);
                           }))
-                          // ind > 0 ? index-- : ind;
-               
-
                   ],
                 );
               },
             itemCount: 2);}
-      // ],
     ),
-    // CarouselView(
-
-    //   itemExtent: MediaQuery.sizeOf(context).width*0.9,
-    //   shrinkExtent: MediaQuery.sizeOf(context).width*0.5,
-    //     scrollDirection: Axis.horizontal,
-          
-    //      children: [
-    //     AchievementsSlider(context, user),  
-    //     ProfileSkills(context, user)
-    //   ]),
     );
 }
 
@@ -450,7 +458,7 @@ Widget AchievementsSlider(BuildContext context, User user){
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Padding(
-          padding: const EdgeInsets.only(top: 12, bottom: 9),
+          padding: const EdgeInsets.only(top: 12, bottom: 19),
           child: Text("Achievements", style: TextStyle(
             color: Colors.white, fontSize: 22,fontWeight: FontWeight.w700),),
         ),
@@ -568,7 +576,7 @@ Widget ProfileSkills(BuildContext context, User user){
         ),
         SizedBox(height: 30,),
         Padding(
-          padding: const EdgeInsets.only(right: 1),
+          padding: const EdgeInsets.only(right: 15),
           child: Container(
             height: MediaQuery.sizeOf(context).height*0.32,
             child: SpiderChart(data:skills.map((e){
@@ -577,7 +585,7 @@ Widget ProfileSkills(BuildContext context, User user){
               }
               return 0.0;
             },).toList(),
-            decimalPrecision: 1,
+            decimalPrecision: 2,
 
             maxValue: 20,
             labels: ["Web", "Adaptation\n& creativity\n", "Algo & AI",
@@ -585,17 +593,6 @@ Widget ProfileSkills(BuildContext context, User user){
              "\n\nBasics", "\n\nGraphics", "\nGroup &\ninterpersonal", "\n\nImperative\nprogramming", "Network\n& system\nadministration", "\n\nObject oriented\nprogramming", "\n\nOrganization",
               "\nParallel\ncomputing", "Rigor", "Ruby", "Security", "Shell", "Technology\nintegration", "Unix"],
             )
-
-              // ticks: [5,10,15,20].toList(),
-              // features: ["Web", "Adaptation & creativity", "Algo & AI", "Basics", "Company Exp", "Db & Data", "Functional programming", "Graphics","Group & interpersonal", "Imperative programming", "Network & system administration", "Objectoriented programming", "Organization", "Parallel computing", "Rigor", "Ruby", "Security", "Shell", "Technology integration", "Unix"].toList(),
-              // data: [[6.2, 0, 3.74, 0, 10.99, 0,0 ,3.18, 6.96,4.87,  7.24, 5.67, 0, 0 ,7.76, 0,0,0,0, 4.34].toList()], 
-              // axisColor: Colors.black12,
-              // graphColors: [const Color.fromARGB(255, 0, 109, 4)],
-              // sides: 20,
-              // outlineColor: const Color.fromARGB(255, 188, 188, 188),
-              // featuresTextStyle: TextStyle(fontSize: 8, overflow: TextOverflow.fade),
-          
-              
               ),
         ),
           SizedBox(

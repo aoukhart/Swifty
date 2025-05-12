@@ -10,9 +10,26 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   final prefs = await SharedPreferences.getInstance();
-  final token = await prefs.getString("accessToken");
+  final token = prefs.getString("accessToken");
+  final expDate = prefs.getString("expirationDate");
+  var isExpired = false;
+  // print("=>" + expDate );
+  final String expirationDate = expDate.toString();
+  if (expirationDate != 'null'){
+  print("...=>" + expirationDate);
+    isExpired = DateTime.now().isAfter(DateTime.parse(expirationDate));
+  print("is expired ? =>" + isExpired.toString());
+      print("= >>> $expirationDate");
+    if (isExpired){
+      await prefs.remove("accessToken");
+      await prefs.remove("expirationDate");
+      isExpired = true;
+    }
+  }
   print("local token : $token");
-  runApp(MyApp(isLogged:  token != null));
+  print("= = > ${isExpired.toString()}");
+  print("local expDate : $expirationDate");
+  runApp(MyApp(isLogged:  (token != null) && (!isExpired)));
 }
 
 class MyApp extends StatelessWidget {

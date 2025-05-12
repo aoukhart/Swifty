@@ -6,11 +6,16 @@ import 'package:http/http.dart' as http;
 import 'package:oauth2_client/access_token_response.dart';
 import 'package:oauth2_client/oauth2_client.dart';
 import 'package:oauth2_client/oauth2_helper.dart';
+import 'package:restart_app/restart_app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swifty_companion/models/user.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 
 String url = dotenv.get("API_URL");
+String client_id = dotenv.get("CLIENT_ID");
+String client_secret = dotenv.get("CLIENT_SECRET");
+String auth_url = dotenv.get("AUTH_URL");
+String token_url = dotenv.get("TOKEN_URL");
 
 class Api42Service{
   late AccessTokenResponse accessToken;
@@ -35,15 +40,15 @@ class Api42Service{
 
       return "";
     }
-     print(">>>>> ${cached}");
+     print("frm cache >> ${cached}");
     return cached.toString();
   }
 
   _init42Service() async {
     
     client = OAuth2Client(
-      authorizeUrl: 'https://api.intra.42.fr/oauth/authorize',
-      tokenUrl: 'https://api.intra.42.fr/oauth/token',
+      authorizeUrl: auth_url,
+      tokenUrl: token_url,
       redirectUri: 'my.swifty.app://oauth2redirect',
       customUriScheme: 'my.swifty.app'
     );
@@ -56,19 +61,20 @@ class Api42Service{
   getToken() async {
      print("Getting Token");
      final rsp = await client.getTokenWithAuthCodeFlow(
-      clientId: "u-s4t2ud-ce2186eb256232005ab650c3d34eb0dfc72f1b248070d5e662722dc0d9b7f587",
-      clientSecret: "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",
+      clientId: client_id,
+      clientSecret: client_secret,
       scopes: ["public", "profile"],
     );
      print("rqst rsp: $rsp");
     if (rsp.httpStatusCode == 200 && rsp.accessToken != null){
       
-      // print( await SharedPreferencesAsync().getString("accessToken") );
       accessToken = rsp;
-      print("DONE >>>>> $token");
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString("accessToken",rsp.accessToken!);
+      var expirationDate = rsp.expirationDate.toString();
+      await prefs.setString("expirationDate", expirationDate);
       token = rsp.accessToken!;
+      print("DONE >>>>> $token ${rsp.expirationDate?.day} ${rsp.expirationDate?.hour} ${rsp.expirationDate?.minute} ${rsp.expirationDate?.second}");
       return token;
     }
   }
@@ -77,15 +83,26 @@ class Api42Service{
     token = "";
     final prefs = await SharedPreferences.getInstance();
     bool removed = await prefs.remove("accessToken");
-    return removed;
+    bool removed1 = await prefs.remove("expirationDate");
+    return removed && removed1;
   }
 
-  Future<User> getLoggedUserInfo() async {
+  Future getLoggedUserInfo() async {
 
+    final prefs = await SharedPreferences.getInstance();
     if (token == ""){
-      final prefs = await SharedPreferences.getInstance();
       token = prefs.getString("accessToken")!;
-      
+    }
+    var time = prefs.getString("expirationDate");
+    if (time != ""){
+      if (DateTime.now().isBefore(DateTime.parse(time!)) == true){
+        //
+      }else{
+        logout();
+        await prefs.remove("expirationDate");
+        await prefs.remove("accessToken");
+        Restart.restartApp(notificationBody: "Your session has expired", notificationTitle: "Your Session has expired");
+      };
     }
     final res = await http.get(Uri.parse("$url/v2/me"), headers: {
       'Content-Type': 'application/json',
@@ -116,16 +133,18 @@ class Api42Service{
   }
 
   Future<User> getUserWithLogin(String login) async {
-    print("looking for user");
+
+    // print("looking for user");
     final res = await http.get(Uri.parse("$url/v2/users/$login"), headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       'Authorization': 'Bearer $token',
     });
     if (res.statusCode == 200){
-      print("called ${res.body}");
+      // print("called ${res.body}");
       return await getCoalition(User.fromJson(jsonDecode(res.body)));
     }else{
+      // print("EGHOOOOOGH");
       throw HttpException("User not Found");
     }
   }

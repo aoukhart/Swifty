@@ -49,6 +49,7 @@ dependencies:
   flutter_radar_chart: ^0.2.1
   fl_chart: ^0.71.0
   spider_chart: ^0.2.0
+  connectivity_plus: ^6.1.4
   # cached_network_svg_image: ^1.2.0
 
 
